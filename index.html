@@ -49,8 +49,9 @@
   }
 
   h1 {
-    margin-bottom: 20px;
-  }
+  margin-bottom: 20px;
+  transition: opacity 0.8s ease;
+}
 
   .buttons {
     display: flex;
@@ -60,13 +61,15 @@
     position: relative;
   }
 
-  button {
-    padding: 14px 32px;
-    font-size: 18px;
-    border: none;
-    border-radius: 30px;
-    cursor: pointer;
-  }
+ button {
+  padding: 14px 32px;
+  font-size: 18px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+
+  transition: opacity 0.8s ease, transform 0.8s ease; /* fade + optional scale */
+}
 
   #yesBtn {
     background: #ff4d6d;
@@ -84,10 +87,12 @@
   }
 
   #success {
-    display: none;
-    font-size: 22px;
-    margin-top: 20px;
-  }
+  display: block;          /* keep block so transition works */
+  opacity: 0;              /* start invisible */
+  font-size: 22px;
+  margin-top: 20px;
+  transition: opacity 1s ease; /* smooth fade */
+}
 
 .confetti {
   position: fixed;
@@ -207,9 +212,31 @@ yesBtn.addEventListener('click', () => {
   music.play().catch(() => {});
   fadeInMusic(music, 2000);
 
-  confetti(); // hearts now properly fall and spin
-  success.style.display = 'block';
-  noBtn.style.display = 'none';
+  confetti(); // fluttering hearts
+
+  // Fade out question
+  const question = document.querySelector('h1');
+  question.style.transition = 'opacity 0.8s ease';
+  question.style.opacity = '0';
+
+  // Fade out buttons
+  yesBtn.style.opacity = '0';
+  yesBtn.style.transform = 'scale(0.8)';
+
+  noBtn.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+  noBtn.style.opacity = '0';
+  noBtn.style.transform = 'scale(0.8) translate(0,0)';
+
+  setTimeout(() => {
+    yesBtn.style.display = 'none';
+    noBtn.style.display = 'none';
+  }, 800);
+
+  // Smooth fade-in success message
+  const success = document.getElementById('success');
+  setTimeout(() => {
+    success.style.opacity = '1';
+  }, 900); // slightly after buttons disappear
 });
 
 function fadeInMusic(audio, duration = 2000) {
